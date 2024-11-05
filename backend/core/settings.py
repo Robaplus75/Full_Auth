@@ -9,24 +9,34 @@ https://docs.djangoproject.com/en/5.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
-
+from os import getenv, path
 from pathlib import Path
+import dotenv
+from django.core.management.utils import get_random_secret_key
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+
+dotenv_file = BASE_DIR / ".env.local"
+
+if path.isfile(dotenv_file):
+    dotenv.load_dotenv(dotenv_file)
+
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-eloybglu3n^cyg8m0hq5ph!!-^c2scr9)sb=m1h80%@8md)*ml'
+# SECRET_KEY = 'django-insecure-eloybglu3n^cyg8m0hq5ph!!-^c2scr9)sb=m1h80%@8md)*ml'
+SECRET_KEY = getenv("DJANGO_SECRET_KEY", get_random_secret_key())
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = getenv("DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 
 # Application definition
 
@@ -37,6 +47,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'users',
 ]
 
 MIDDLEWARE = [
@@ -121,3 +133,6 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+
